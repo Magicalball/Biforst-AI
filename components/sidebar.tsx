@@ -1,18 +1,11 @@
-"客户端使用";
+"use client";
 
 import Link from "next/link";
 import Image from "next/image";
 import { Montserrat } from "next/font/google";
 import { cn } from "@/lib/utils";
-import {
-  CodeIcon,
-  ImageIcon,
-  LayoutDashboard,
-  MessageCircle,
-  MusicIcon,
-  SettingsIcon,
-  VideoIcon,
-} from "lucide-react";
+import { usePathname } from "next/navigation";
+import { CodeIcon, ImageIcon, LayoutDashboard, MessageCircle, MusicIcon, SettingsIcon, VideoIcon } from "lucide-react";
 
 const montserrat = Montserrat({
   weight: "600",
@@ -65,24 +58,32 @@ const routes = [
 ];
 
 const Sidebar = () => {
+  const pathaname = usePathname();
+
   return (
     <div className="flex h-full flex-col space-y-4 bg-[#111827] py-4 text-white">
       <div className="flex-1 px-3 py-2">
-        <Link href="/dashboard" className="mb-14 flex items-center pl-3">
+        <Link
+          href="/dashboard"
+          className="mb-14 flex items-center pl-3">
           <div className="relative mr-4 h-8 w-16">
-            <Image fill={true} alt="Logo" src="/logo.png" />
+            <Image
+              fill={true}
+              alt="Logo"
+              src="/logo.png"
+            />
           </div>
-          <h1 className={cn("text-2xl font-bold", montserrat.className)}>
-            Biforst AI
-          </h1>
+          <h1 className={cn("text-2xl font-bold", montserrat.className)}>Biforst AI</h1>
         </Link>
         <div className="space-y-1">
           {routes.map((route) => (
             <Link
               href={route.href}
               key={route.href}
-              className="group flex w-full cursor-pointer justify-start rounded-lg p-3 text-sm font-medium transition-colors duration-200 hover:bg-white/10 hover:text-white"
-            >
+              className={cn(
+                "group flex w-full cursor-pointer justify-start rounded-lg p-3 text-sm font-medium transition-colors duration-200 hover:bg-white/10 hover:text-white",
+                pathaname === route.href ? "bg-white/10 text-white" : "text-zinc-400"
+              )}>
               <div className="flex flex-1 items-center">
                 <route.icon className={cn("mr-3 h-5 w-5", route.color)} />
                 {route.name}
