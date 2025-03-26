@@ -5,7 +5,16 @@ import Image from "next/image";
 import { Montserrat } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
-import { CodeIcon, ImageIcon, LayoutDashboard, MessageCircle, MusicIcon, SettingsIcon, VideoIcon } from "lucide-react";
+
+import {
+  CodeIcon,
+  ImageIcon,
+  LayoutDashboard,
+  MessageCircle,
+  MusicIcon,
+  SettingsIcon,
+  VideoIcon,
+} from "lucide-react";
 
 const montserrat = Montserrat({
   weight: "600",
@@ -22,43 +31,43 @@ const routes = [
   {
     name: "对话",
     icon: MessageCircle,
-    href: "/dashboard",
+    href: "/conversation",
     color: "text-violet-500",
   },
   {
     name: "图片生成",
     icon: ImageIcon,
-    href: "/dashboard",
+    href: "/picture",
     color: "text-pink-500",
   },
   {
     name: "视频生成",
     icon: VideoIcon,
-    href: "/dashboard",
+    href: "/video",
     color: "text-orange-500",
   },
   {
     name: "音乐生成",
     icon: MusicIcon,
-    href: "/dashboard",
+    href: "/music",
     color: "text-red-700",
   },
   {
     name: "代码生成",
     icon: CodeIcon,
-    href: "/dashboard",
+    href: "/code",
     color: "text-green-600",
   },
   {
     name: "设置",
     icon: SettingsIcon,
-    href: "/dashboard",
+    href: "/setting",
     color: "text-gray-400",
   },
 ];
 
 const Sidebar = () => {
-  const pathaname = usePathname();
+  const pathname = usePathname();
 
   return (
     <div className="flex h-full flex-col space-y-4 bg-[#111827] py-4 text-white">
@@ -82,7 +91,7 @@ const Sidebar = () => {
               key={route.href}
               className={cn(
                 "group flex w-full cursor-pointer justify-start rounded-lg p-3 text-sm font-medium transition-colors duration-200 hover:bg-white/10 hover:text-white",
-                pathaname === route.href ? "bg-white/10 text-white" : "text-zinc-400"
+                pathname === route.href ? "bg-white/10 text-white" : "text-zinc-400",
               )}>
               <div className="flex flex-1 items-center">
                 <route.icon className={cn("mr-3 h-5 w-5", route.color)} />
