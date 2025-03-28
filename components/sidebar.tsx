@@ -10,7 +10,7 @@ import {
   CodeIcon,
   ImageIcon,
   LayoutDashboard,
-  MessageCircle,
+  MessageSquare,
   MusicIcon,
   SettingsIcon,
   VideoIcon,
@@ -30,7 +30,7 @@ const routes = [
   },
   {
     name: "对话",
-    icon: MessageCircle,
+    icon: MessageSquare,
     href: "/conversation",
     color: "text-violet-500",
   },
@@ -38,7 +38,7 @@ const routes = [
     name: "图片生成",
     icon: ImageIcon,
     href: "/picture",
-    color: "text-pink-500",
+    color: "text-pink-400",
   },
   {
     name: "视频生成",

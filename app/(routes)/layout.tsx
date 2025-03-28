@@ -10,7 +10,6 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
       </div>
       <main className="md:pl-72">
         <Navbar />
-        这里是内容。
         {children}
       </main>
     </div>
