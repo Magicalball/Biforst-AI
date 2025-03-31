@@ -1,15 +1,22 @@
 "use client";
 
+import axios from "axios";
 import * as z from "zod";
-import { Heading } from "@/components/heading";
 import { MessageSquare } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { formSchema } from "./constance";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+import { Heading } from "@/components/heading";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { ChatCompletionMessage } from "openai/resources/chat/index.mjs";
 
 const ConversationPage = () => {
+  const router = useRouter();
+  const [messages, setMessages] = useState<ChatCompletionMessage[]>([]);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -20,7 +27,27 @@ const ConversationPage = () => {
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+    try {
+      const userMessage: ChatCompletionMessage = {
+        role: "assistant",
+        refusal: null,
+        content: values.prompt,
+      };
+      const newMessages = [...messages, userMessage];
+
+      const response = await axios.post("/api/conversation", {
+        messages: newMessages,
+      });
+
+      setMessages((current) => [...current, userMessage, response.data]); //更新消息列表
+
+      form.reset(); //重置输入框
+    } catch (error: Error | unknown) {
+      //错误处理记得回头看一下
+      console.log(error);
+    } finally {
+      router.refresh(); //刷新页面
+    }
   };
 
   return (
@@ -54,8 +81,20 @@ const ConversationPage = () => {
                   </FormItem>
                 )}
               />
+              <Button
+                className="col-span-12 w-full lg:col-span-2"
+                disabled={isLoading}>
+                发送
+              </Button>
             </form>
           </Form>
+        </div>
+        <div className="mt-6 space-y-4">
+          <div className="flex flex-col-reverse gap-y-4">
+            {messages.map((message) => (
+              <div key={message.content}>{message.content}</div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
