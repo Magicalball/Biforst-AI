@@ -78,7 +78,7 @@ const Sidebar = () => {
           <div className="relative mr-4 h-8 w-16">
             <Image
               fill={true}
-              alt="Logo"
+              alt="Logo走丢了~"
               src="/logo.png"
             />
           </div>

@@ -2,17 +2,21 @@
 
 import axios from "axios";
 import * as z from "zod";
+import Markdown from "react-markdown";
+import { useState } from "react";
 import { MessageSquare } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { formSchema } from "./constance";
+import { useRouter } from "next/navigation";
+import { ChatCompletionMessage } from "openai/resources/chat/index.mjs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Heading } from "@/components/heading";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { ChatCompletionMessage } from "openai/resources/chat/index.mjs";
+import { EmptyPage } from "@/components/empty";
+import { Loader } from "@/components/loader";
+import { cn } from "@/lib/utils";
 
 const ConversationPage = () => {
   const router = useRouter();
@@ -90,9 +94,22 @@ const ConversationPage = () => {
           </Form>
         </div>
         <div className="mt-6 space-y-4">
+          {isLoading && (
+            <div className="bg-muted flex w-full items-center justify-center rounded-lg p-8">
+              <Loader />
+            </div>
+          )}
+          {messages.length === 0 && !isLoading && <EmptyPage label="哇！被发现了^-^" />}
           <div className="flex flex-col-reverse gap-y-4">
             {messages.map((message) => (
-              <div key={message.content}>{message.content}</div>
+              <div
+                key={message.content}
+                className={cn(
+                  "flex w-full items-start gap-x-8 rounded-lg p-8",
+                  message.role === "assistant" ? "border border-black/10 bg-white" : "bg-muted",
+                )}>
+                <Markdown>{message.content}</Markdown>
+              </div>
             ))}
           </div>
         </div>

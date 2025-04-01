@@ -50,7 +50,6 @@ body,
   height: 100%;
 }
 
-
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
@@ -84,6 +83,11 @@ body,
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  /* ysloading */
+  --loadingbar-background-color: #f5f5f5;
+  --loadingbar-prospect-color: #666666;
+  --loading-width: 500px;
+  --loading-height: 62.5px;
 }
 
 .dark {
@@ -118,6 +122,9 @@ body,
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  /* ysloading */
+  --loadingbar-background-color: #2c2b30;
+  --loadingbar-prospect-color: #ece5d8;
 }
 
 @layer base {
@@ -128,3 +135,70 @@ body,
     @apply bg-background text-foreground;
   }
 }
+
+/* 该部分为原神七元素加载动画 */
+/* 加载动画容器 */
+.loadingbar {
+  @apply absolute top-1/2 left-1/2 overflow-hidden select-none;
+  width: var(--loading-width);
+  height: var(--loading-height);
+  transform: translate(-50%, -50%) scale(0.8);
+  transition: all 0.5s;
+}
+
+/* 加载动画图片 */
+.loadingbar img {
+  @apply absolute left-0;
+  top: var(--loading-width);
+  filter: drop-shadow(0 calc(-1 * var(--loading-width)) 0 var(--loadingbar-background));
+}
+
+/* 加载进度条动画 */
+.loadingbar::after {
+  content: "";
+  position: absolute;
+  top: 500px;
+  left: 0;
+  width: 500px;
+  height: 62.5px;
+  filter: drop-shadow(0 -500px 0 var(--loadingbar-prospect-color));
+  background: url("https://yuanshen.site/imgs/loading-bar.png") no-repeat left 100%;
+  background-size: 500px 62.5px;
+  background-position-x: 0;
+  animation: loading-bar 3.5s cubic-bezier(0.28, 0.11, 0.32, 1) infinite forwards;
+}
+
+/* 响应式设计 */
+@media screen and (max-width: 719px) {
+  .loadingbar {
+    @apply hidden;
+  }
+}
+
+@media screen and (max-width: 719px) and (orientation: landscape) {
+  .loadingbar {
+    @apply !block;
+    transform: translate(-50%, -50%) scale(0.7) !important;
+  }
+}
+
+/* 浏览器兼容性提示 */
+@supports not (filter: drop-shadow(0 0 0 #ffffff)) {
+  .loadingbar::before {
+    @apply absolute top-0 left-0 flex h-full w-full items-center justify-center content-['Your_browser_does_not_support_the_animation'];
+    background-color: var(--loadingbar-background);
+    color: var(--loadingbar-prospect);
+  }
+}
+
+/* 加载动画关键帧 */
+@keyframes loading-bar {
+  0% {
+    width: 0;
+    background-size: var(--loading-width) var(--loading-height);
+  }
+  100% {
+    width: var(--loading-width);
+  }
+}
+/* 至此以上结束 */
