@@ -8,7 +8,7 @@ import { MessageSquare } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { formSchema } from "./constance";
 import { useRouter } from "next/navigation";
-import { ChatCompletionMessage } from "openai/resources/chat/index.mjs";
+import { ChatCompletionMessage, ChatCompletionMessageParam } from "openai/resources/chat/index.mjs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Heading } from "@/components/heading";
@@ -17,10 +17,12 @@ import { Button } from "@/components/ui/button";
 import { EmptyPage } from "@/components/empty";
 import { Loader } from "@/components/loader";
 import { cn } from "@/lib/utils";
+import { BotHead } from "@/components/bothead";
+import { UserHead } from "@/components/userhead";
 
 const ConversationPage = () => {
   const router = useRouter();
-  const [messages, setMessages] = useState<ChatCompletionMessage[]>([]);
+  const [messages, setMessages] = useState<ChatCompletionMessageParam[]>([]);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -32,9 +34,8 @@ const ConversationPage = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const userMessage: ChatCompletionMessage = {
-        role: "assistant",
-        refusal: null,
+      const userMessage: ChatCompletionMessageParam = {
+        role: "user",
         content: values.prompt,
       };
       const newMessages = [...messages, userMessage];
@@ -106,9 +107,10 @@ const ConversationPage = () => {
                 key={message.content}
                 className={cn(
                   "flex w-full items-start gap-x-8 rounded-lg p-8",
-                  message.role === "assistant" ? "border border-black/10 bg-white" : "bg-muted",
+                  message.role === "user" ? "border border-black/10 bg-white" : "bg-muted",
                 )}>
-                <Markdown>{message.content}</Markdown>
+                {message.role === "user" ? <UserHead /> : <BotHead />}
+                <p className="text-sm">{message.content}</p>
               </div>
             ))}
           </div>
