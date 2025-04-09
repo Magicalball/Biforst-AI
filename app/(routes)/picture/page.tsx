@@ -6,7 +6,7 @@ import Markdown from "react-markdown";
 import { useState } from "react";
 import { ImageIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { formSchema } from "./constance";
+import { amountOptions, formSchema, resolutionOptions } from "./constance";
 import { useRouter } from "next/navigation";
 import { ChatCompletionMessageParam } from "openai/resources/chat/index.mjs";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,6 +19,7 @@ import { Loader } from "@/components/loader";
 import { cn } from "@/lib/utils";
 import { BotHead } from "@/components/bothead";
 import { UserHead } from "@/components/userhead";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const PicturePage = () => {
   const router = useRouter();
@@ -39,7 +40,7 @@ const PicturePage = () => {
       setImages([]);
       const response = await axios.post("/api/picture", values);
       const urls = response.data.map((image: { url: string }) => image.url);
-
+      setImages(urls);
       form.reset(); //重置输入框
     } catch (error: Error | unknown) {
       //错误处理记得回头看一下
@@ -68,7 +69,7 @@ const PicturePage = () => {
                 name="prompt"
                 control={form.control}
                 render={({ field }) => (
-                  <FormItem className="col-span-12 lg:col-span-10">
+                  <FormItem className="col-span-12 lg:col-span-6">
                     <FormControl className="m-0 p-0">
                       <Input
                         className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
@@ -77,6 +78,64 @@ const PicturePage = () => {
                         {...field}
                       />
                     </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="amount"
+                render={({ field }) => (
+                  <FormItem className="col-span-12 lg:col-span-2">
+                    <Select
+                      disabled={isLoading}
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue defaultValue={field.value} />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {amountOptions.map((option) => (
+                          <SelectItem
+                            key={option.value}
+                            value={option.value}
+                            >
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="resolution"
+                render={({ field }) => (
+                  <FormItem className="col-span-12 lg:col-span-2">
+                    <Select
+                      disabled={isLoading}
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue defaultValue={field.value} />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {resolutionOptions.map((option) => (
+                          <SelectItem
+                            key={option.value}
+                            value={option.value}
+                            >
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </FormItem>
                 )}
               />
