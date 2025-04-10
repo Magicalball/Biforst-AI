@@ -2,8 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  // 原神资源加载
   images: {
+    // 原神资源加载
     remotePatterns: [
       {
         protocol: "https",
@@ -15,6 +15,9 @@ const nextConfig: NextConfig = {
         hostname: "another-domain.com",
         pathname: "/images/**",
       },
+    ],
+    domains: [
+      "oaidalleapiprodscus.blob.core.windows.net"
     ],
   },
 };

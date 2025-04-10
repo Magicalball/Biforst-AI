@@ -2,13 +2,11 @@
 
 import axios from "axios";
 import * as z from "zod";
-import Markdown from "react-markdown";
 import { useState } from "react";
-import { ImageIcon } from "lucide-react";
+import { Download, ImageIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { amountOptions, formSchema, resolutionOptions } from "./constance";
 import { useRouter } from "next/navigation";
-import { ChatCompletionMessageParam } from "openai/resources/chat/index.mjs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Heading } from "@/components/heading";
@@ -16,10 +14,15 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { EmptyPage } from "@/components/empty";
 import { Loader } from "@/components/loader";
-import { cn } from "@/lib/utils";
-import { BotHead } from "@/components/bothead";
-import { UserHead } from "@/components/userhead";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Card, CardFooter } from "@/components/ui/card";
+import Image from "next/image";
 
 const PicturePage = () => {
   const router = useRouter();
@@ -100,8 +103,7 @@ const PicturePage = () => {
                         {amountOptions.map((option) => (
                           <SelectItem
                             key={option.value}
-                            value={option.value}
-                            >
+                            value={option.value}>
                             {option.label}
                           </SelectItem>
                         ))}
@@ -129,8 +131,7 @@ const PicturePage = () => {
                         {resolutionOptions.map((option) => (
                           <SelectItem
                             key={option.value}
-                            value={option.value}
-                            >
+                            value={option.value}>
                             {option.label}
                           </SelectItem>
                         ))}
@@ -154,7 +155,31 @@ const PicturePage = () => {
             </div>
           )}
           {images.length === 0 && !isLoading && <EmptyPage label="哇！被发现了^-^" />}
-          <div>123</div>
+
+          <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {images.map((image) => (
+              <Card
+                key={image}
+                className="overflow-hidden rounded-lg">
+                <div className="relative aspect-square h-full w-full">
+                  <Image
+                    alt="生成的图片"
+                    fill
+                    src={image}
+                  />
+                </div>
+                <CardFooter className="p-2">
+                  <Button
+                    onClick={() => window.open(image)}
+                    variant="secondary"
+                    className="w-full">
+                    <Download className="mr-2 h-4 w-4" />
+                    下载
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
         </div>
       </div>
     </div>

@@ -11,23 +11,23 @@ export const formSchema = z.object({
 export const amountOptions = [
   {
     value: "1",
-    label: "1张",
+    label: "生成1张",
   },
   {
     value: "2",
-    label: "2张",
+    label: "生成2张",
   },
   {
     value: "3",
-    label: "3张",
+    label: "生成3张",
   },
   {
     value: "4",
-    label: "4张",
+    label: "生成4张",
   },
   {
     value: "5",
-    label: "5张",
+    label: "生成5张",
   },
 ]
 
