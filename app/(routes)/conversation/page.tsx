@@ -19,10 +19,14 @@ import { Loader } from "@/components/loader";
 import { cn } from "@/lib/utils";
 import { BotHead } from "@/components/bothead";
 import { UserHead } from "@/components/userhead";
+import { Select, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
+import { SelectTrigger } from "@radix-ui/react-select";
 
 const ConversationPage = () => {
+  const [isHovered, setIsHovered] = useState(false);
   const router = useRouter();
   const [messages, setMessages] = useState<ChatCompletionMessageParam[]>([]);
+  const [selectedModel, setSelectedModel] = useState<string>("deepseek-chat");
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -42,6 +46,7 @@ const ConversationPage = () => {
 
       const response = await axios.post("/api/conversation", {
         messages: newMessages,
+        model: selectedModel,
       });
 
       setMessages((current) => [...current, userMessage, response.data]); //更新消息列表
@@ -91,6 +96,38 @@ const ConversationPage = () => {
                 disabled={isLoading}>
                 发送
               </Button>
+              <div className="col-span-12 lg:col-span-2">
+                <div
+                  onMouseEnter={() => setIsHovered(true)}
+                  onMouseLeave={() => setIsHovered(false)}
+                  className="relative">
+                  <Select
+                    value={selectedModel}
+                    onValueChange={setSelectedModel}
+                    disabled={isLoading}
+                    defaultValue="deepseek-chat">
+                    <SelectTrigger className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+                      {isHovered && (
+                        <div
+                          className={cn(
+                            "absolute top-[-35px] left-0 z-10",
+                            "rounded border border-gray-300 bg-white px-2 py-1 text-sm text-gray-600",
+                            "whitespace-nowrap shadow-md",
+                          )}>
+                          点击切换模型
+                        </div>
+                      )}
+                      <SelectValue placeholder="模型" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="deepseek-chat">DeepSeek</SelectItem>
+                      <SelectItem value="gpt-4o-mini">GPT-4o-mini</SelectItem>
+                      <SelectItem value="o3-mini">GPT-o3-mini</SelectItem>
+                      <SelectItem value="gpt-4o">GPT-4o</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
             </form>
           </Form>
         </div>
