@@ -1,7 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
-import { Models } from "openai/resources/models.mjs";
 
 
 export async function POST(req: Request) {

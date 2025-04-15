@@ -7,7 +7,6 @@ import { Music } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { formSchema } from "./constance";
 import { useRouter } from "next/navigation";
-import { ChatCompletionMessageParam } from "openai/resources/chat/index.mjs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Heading } from "@/components/heading";
@@ -15,35 +14,75 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { EmptyPage } from "@/components/empty";
 import { Loader } from "@/components/loader";
-import { cn } from "@/lib/utils";
-import { BotHead } from "@/components/bothead";
-import { UserHead } from "@/components/userhead";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Download } from "lucide-react";
 
 const MusicPage = () => {
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [taskId, setTaskId] = useState<string>("");
   const router = useRouter();
   const [music, setMusic] = useState<string>();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       prompt: "",
+      style: "",
+      title: "",
     },
   });
 
   const isLoading = form.formState.isSubmitting;
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const checkMusicStatus = async (taskId: string) => {
     try {
-      setMusic(undefined);
+      const response = await axios.get(`/api/music/status/${taskId}`);
+      const { status, audio } = response.data;
 
-      const response = await axios.post("/api/music",values);
-
-      setMusic(response.data.audio);
-      form.reset(); //重置输入框
+      if (status === "complete") {
+        setMusic(audio);
+        setIsGenerating(false);
+      } else if (status === "processing") {
+        // 继续轮询
+        setTimeout(() => checkMusicStatus(taskId), 5000);
+      }
     } catch (error: Error | unknown) {
       //错误处理记得回头看一下
       console.log(error);
+      setIsGenerating(false);
     } finally {
       router.refresh(); //刷新页面
+    }
+  };
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      setMusic(undefined);
+      setIsGenerating(true);
+
+      const response = await axios.post("/api/music", {
+        prompt: values.prompt,
+        style: values.style,
+        title: values.title,
+        customMode: true,
+        instrumental: true,
+        model: "V3_5",
+        callBackUrl: "", // 添加回调 URL
+      });
+      setTaskId(response.data.taskId);
+      checkMusicStatus(response.data.taskId);
+
+      setMusic(response.data.audio);
+      form.reset(); //重置输入框
+    } catch (error) {
+      console.error("生成音乐错误:", error);
+      setIsGenerating(false);
     }
   };
 
@@ -78,34 +117,81 @@ const MusicPage = () => {
                   </FormItem>
                 )}
               />
+              <FormField
+                name="title"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem className="col-span-12 lg:col-span-2">
+                    <FormControl className="m-0 p-0">
+                      <Input
+                        className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
+                        disabled={isLoading}
+                        placeholder="音乐标题"
+                        {...field}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                name="style"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem className="col-span-12 lg:col-span-2">
+                    <Select
+                      disabled={isLoading}
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      defaultValue={field.value}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="选择风格" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="古典">古典</SelectItem>
+                        <SelectItem value="爵士">爵士</SelectItem>
+                        <SelectItem value="电子">电子</SelectItem>
+                        <SelectItem value="流行">流行</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
+                )}
+              />
               <Button
                 className="col-span-12 w-full lg:col-span-2"
                 disabled={isLoading}>
-                发送
+                开始生成
               </Button>
             </form>
           </Form>
         </div>
         <div className="mt-6 space-y-4">
-          {isLoading && (
+          {(isLoading || isGenerating) && (
             <div className="bg-muted flex w-full items-center justify-center rounded-lg p-8">
               <Loader />
+              <p className="text-muted-foreground ml-2 text-sm">
+                {isGenerating ? "正在生成音乐..." : "正在处理..."}
+              </p>
             </div>
           )}
-          {music && !isLoading && <EmptyPage label="哇！被发现了^-^" />}
-          <div className="flex flex-col-reverse gap-y-4">
-            {messages.map((message) => (
-              <div
-                key={message.content}
-                className={cn(
-                  "flex w-full items-start gap-x-8 rounded-lg p-8",
-                  message.role === "user" ? "border border-black/10 bg-white" : "bg-muted",
-                )}>
-                {message.role === "user" ? <UserHead /> : <BotHead />}
-                <p className="text-sm">{message.content}</p>
-              </div>
-            ))}
-          </div>
+          {!music && !isLoading && !isGenerating && <EmptyPage label="输入提示词开始创作吧！" />}
+          {music && (
+            <Card>
+              <CardContent className="p-6">
+                <audio
+                  className="w-full"
+                  controls
+                  src={music}
+                />
+                <Button
+                  onClick={() => window.open(music)}
+                  variant="secondary"
+                  className="mt-4 w-full">
+                  <Download className="mr-2 h-4 w-4" />
+                  下载音乐
+                </Button>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </div>
