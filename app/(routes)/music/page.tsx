@@ -35,6 +35,7 @@ const MusicPage = () => {
       prompt: "",
       style: "",
       title: "",
+      callBackUrl: "https://api.example.com/callback",
     },
   });
 
@@ -73,7 +74,7 @@ const MusicPage = () => {
         customMode: true,
         instrumental: true,
         model: "V3_5",
-        callBackUrl: "", // 添加回调 URL
+        callBackUrl: "https://api.example.com/callback", // 添加回调 URL
       });
       setTaskId(response.data.taskId);
       checkMusicStatus(response.data.taskId);

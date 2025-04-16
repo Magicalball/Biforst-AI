@@ -14,13 +14,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { EmptyPage } from "@/components/empty";
 import { Loader } from "@/components/loader";
-import { cn } from "@/lib/utils";
-import { BotHead } from "@/components/bothead";
-import { UserHead } from "@/components/userhead";
 
-const MusicPage = () => {
+const VideoPage = () => {
   const router = useRouter();
-  const [music, setMusic] = useState<string>();
+  const [video, setVideo] = useState<string>();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -32,11 +29,11 @@ const MusicPage = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      setMusic(undefined);
+      setVideo(undefined);
 
-      const response = await axios.post("/api/music",values);
+      const response = await axios.post("/api/video",values);
 
-      setMusic(response.data.audio);
+      setVideo(response.data[0]);
       form.reset(); //重置输入框
     } catch (error: Error | unknown) {
       //错误处理记得回头看一下
@@ -49,11 +46,11 @@ const MusicPage = () => {
   return (
     <div>
       <Heading
-        title="欢迎使用音乐创作助手"
-        description="创作任何你能想象出的音乐！"
+        title="欢迎使用AI生成视频"
+        description="视频生成无限可能！"
         icon={Music}
-        iconColor="text-red-700"
-        bgColor="bg-red-700/10"
+        iconColor="text-orange-500"
+        bgColor="bg-orange-500/10"
       />
       <div className="px-4 lg:px-8">
         <div>
@@ -70,7 +67,7 @@ const MusicPage = () => {
                       <Input
                         className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
                         disabled={isLoading}
-                        placeholder="请输入你的灵感~ 例如：钢琴独奏"
+                        placeholder="两个宇航员在月球表面漫步，背景是宇宙"
                         {...field}
                       />
                     </FormControl>
@@ -80,7 +77,7 @@ const MusicPage = () => {
               <Button
                 className="col-span-12 w-full lg:col-span-2"
                 disabled={isLoading}>
-                发送
+                立即生成
               </Button>
             </form>
           </Form>
@@ -91,14 +88,16 @@ const MusicPage = () => {
               <Loader />
             </div>
           )}
-          {music && !isLoading && <EmptyPage label="哇！被发现了^-^" />}
-          <div className="flex flex-col-reverse gap-y-4">
-            
-          </div>
+          {video && !isLoading && <EmptyPage label="哇！被发现了^-^" />}
+          {video && (
+            <video className="w-full aspect-video mt-8 rounded-lg border bg-black" controls>
+              <source src={video}/>
+            </video>
+          )}
         </div>
       </div>
     </div>
   );
 };
 
-export default MusicPage;
+export default VideoPage;

@@ -2,7 +2,6 @@
 
 import axios from "axios";
 import * as z from "zod";
-import Markdown from "react-markdown";
 import { useState } from "react";
 import { MessageSquare } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -97,16 +96,16 @@ const ConversationPage = () => {
                 发送
               </Button>
               <div className="col-span-12 lg:col-span-2">
-                <div
-                  onMouseEnter={() => setIsHovered(true)}
-                  onMouseLeave={() => setIsHovered(false)}
-                  className="relative">
+                <div className="relative">
                   <Select
                     value={selectedModel}
                     onValueChange={setSelectedModel}
                     disabled={isLoading}
                     defaultValue="deepseek-chat">
-                    <SelectTrigger className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+                    <SelectTrigger
+                      className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-gray-400 focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                      onMouseEnter={() => setIsHovered(true)}
+                      onMouseLeave={() => setIsHovered(false)}>
                       {isHovered && (
                         <div
                           className={cn(

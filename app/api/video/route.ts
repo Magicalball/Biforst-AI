@@ -3,11 +3,15 @@ import { NextResponse } from "next/server";
 import axios from "axios";
 
 // 定义请求体的类型
-interface VideoGenerationRequest {
+interface MusicGenerationRequest {
   prompt: string;
-  size?: string;
+  style?: string;
+  title?: string;
+  customMode?: boolean;
+  instrumental?: boolean;
   model?: string;
-  duration?: number;
+  negativeTags?: string;
+  callBackUrl: string;
 }
 
 export async function POST(req: Request) {
@@ -16,10 +20,14 @@ export async function POST(req: Request) {
     const body = await req.json();
     const {
       prompt,
-      size,
-      duration,
-      model="wanx2.1-t2v-turbo",
-    } = body as VideoGenerationRequest;
+      style,
+      title,
+      customMode = false,
+      instrumental = false,
+      model,
+      negativeTags,
+      callBackUrl,
+    } = body as MusicGenerationRequest;
 
     if (!userId) {
       return new NextResponse("Unauthorized", { status: 401 });
@@ -44,16 +52,20 @@ export async function POST(req: Request) {
       },
       data: {
         prompt,
-        size,
+        style,
+        title,
+        customMode,
+        instrumental,
         model,
-        duration,
+        negativeTags,
+        callBackUrl,
       },
     };
 
     const response = await axios.request(config);
     return NextResponse.json(response.data);
   } catch (error) {
-    console.error("[VIDEO_GENERATION_ERROR]", error);
+    console.error("[MUSIC_GENERATION_ERROR]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
 }
