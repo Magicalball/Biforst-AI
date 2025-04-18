@@ -1,33 +1,16 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import axios from "axios";
+import Replicate from "replicate";
 
-// 定义请求体的类型
-interface MusicGenerationRequest {
-  prompt: string;
-  style?: string;
-  title?: string;
-  customMode?: boolean;
-  instrumental?: boolean;
-  model?: string;
-  negativeTags?: string;
-  callBackUrl: string;
-}
+const replicate = new Replicate();
+
+
 
 export async function POST(req: Request) {
   try {
     const { userId } = await auth();
     const body = await req.json();
-    const {
-      prompt,
-      style,
-      title,
-      customMode = false,
-      instrumental = false,
-      model,
-      negativeTags,
-      callBackUrl,
-    } = body as MusicGenerationRequest;
 
     if (!userId) {
       return new NextResponse("Unauthorized", { status: 401 });
@@ -41,27 +24,7 @@ export async function POST(req: Request) {
       return new NextResponse("Prompt is required", { status: 400 });
     }
 
-    const config = {
-      method: "post",
-      maxBodyLength: Infinity,
-      url: "https://apibox.erweima.ai/api/v1/generate",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${process.env.SUNO_API_KEY}`,
-      },
-      data: {
-        prompt,
-        style,
-        title,
-        customMode,
-        instrumental,
-        model,
-        negativeTags,
-        callBackUrl,
-      },
-    };
-
+  
     const response = await axios.request(config);
     return NextResponse.json(response.data);
   } catch (error) {
