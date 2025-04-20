@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Montserrat } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
+import {FreeCounter} from "@/components/freecount";
 
 import {
   CodeIcon,
@@ -66,7 +67,11 @@ const routes = [
   },
 ];
 
-const Sidebar = () => {
+interface SiderbarProps {
+  apiLimitCount: number;
+}
+
+const Sidebar = ({ apiLimitCount = 0 }: SiderbarProps) => {
   const pathname = usePathname();
 
   return (
@@ -100,6 +105,12 @@ const Sidebar = () => {
             </Link>
           ))}
         </div>
+      </div>
+      <FreeCounter apiLimitCount={apiLimitCount} />
+      <div className="flex flex-col items-center justify-center space-y-2 border-t border-t-gray-700 pt-4">
+        <p className="text-xs text-gray-400">Made by <a href="https://github.com/Magicalball/Biforst-AI" target="_blank">Magical_ball</a></p>
+        <p className="text-xs text-gray-400">© 2025 Biforst AI</p>
+        <p className="text-xs text-gray-400">Powered by <a href="https://nextjs.org/" target="_blank">Next.js</a></p>
       </div>
     </div>
   );

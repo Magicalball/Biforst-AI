@@ -20,8 +20,6 @@ export async function POST(req: Request) {
       return new NextResponse("Model is required", { status: 400 });
     }
 
-
-
     let openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     });

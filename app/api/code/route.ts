@@ -2,16 +2,18 @@ import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 import { ChatCompletionMessage } from "openai/resources/index.mjs";
+import { creatApiLimit, checkApiLimit } from "@/lib/api-limit";
 
 const openai = new OpenAI({
   baseURL: "https://api.deepseek.com",
   apiKey: process.env.DEEP_API_KEY,
 });
 
-const instructionMessage : ChatCompletionMessage = {
+const instructionMessage: ChatCompletionMessage = {
   role: "system",
-  content:"你是一个代码生成器这是你的身份，你必须在Markdown代码块中返回代码，并使用注释解释代码的每一行。"
-}
+  content:
+    "你是一个代码生成器这是你的身份，你必须在Markdown代码块中返回代码，并使用注释解释代码的每一行。",
+};
 
 export async function POST(req: Request) {
   try {
@@ -29,10 +31,17 @@ export async function POST(req: Request) {
       return new NextResponse("Message is required", { status: 400 });
     }
 
+    const freeTrial = await checkApiLimit();
+
+    if (!freeTrial) {
+      return new NextResponse("Free is required", { status: 403 });
+    }
+
     const response = await openai.chat.completions.create({
       model: "deepseek-chat",
       messages: [instructionMessage, ...messages],
     });
+    await creatApiLimit();
     return NextResponse.json(response.choices[0].message);
   } catch (error) {
     console.error("[CODE_ERROR]", error);
