@@ -14,8 +14,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { EmptyPage } from "@/components/empty";
 import { Loader } from "@/components/loader";
+import { usePlusStore } from "@/hooks/use-plus";
 
 const VideoPage = () => {
+  const plusStore = usePlusStore();
   const router = useRouter();
   const [video, setVideo] = useState<string>();
   const form = useForm<z.infer<typeof formSchema>>({
@@ -31,13 +33,14 @@ const VideoPage = () => {
     try {
       setVideo(undefined);
 
-      const response = await axios.post("/api/video",values);
+      const response = await axios.post("/api/video", values);
 
       setVideo(response.data[0]);
       form.reset(); //重置输入框
-    } catch (error: Error | unknown) {
-      //错误处理记得回头看一下
-      console.log(error);
+    } catch (error: any) {
+      if (error?.response?.status === 403) {
+        plusStore.onOpen(); //打开Plus对话框
+      }
     } finally {
       router.refresh(); //刷新页面
     }
@@ -90,8 +93,10 @@ const VideoPage = () => {
           )}
           {video && !isLoading && <EmptyPage label="哇！被发现了^-^" />}
           {video && (
-            <video className="w-full aspect-video mt-8 rounded-lg border bg-black" controls>
-              <source src={video}/>
+            <video
+              className="mt-8 aspect-video w-full rounded-lg border bg-black"
+              controls>
+              <source src={video} />
             </video>
           )}
         </div>

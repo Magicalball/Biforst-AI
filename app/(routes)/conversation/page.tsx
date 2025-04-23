@@ -20,8 +20,10 @@ import { BotHead } from "@/components/bothead";
 import { UserHead } from "@/components/userhead";
 import { Select, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { SelectTrigger } from "@radix-ui/react-select";
+import { usePlusStore } from "@/hooks/use-plus";
 
 const ConversationPage = () => {
+  const plusStore = usePlusStore();
   const [isHovered, setIsHovered] = useState(false);
   const router = useRouter();
   const [messages, setMessages] = useState<ChatCompletionMessageParam[]>([]);
@@ -51,9 +53,10 @@ const ConversationPage = () => {
       setMessages((current) => [...current, userMessage, response.data]); //更新消息列表
 
       form.reset(); //重置输入框
-    } catch (error: Error | unknown) {
-      //错误处理记得回头看一下
-      console.log(error);
+    } catch (error: any) {
+      if (error?.response?.status === 403) {
+        plusStore.onOpen(); //打开Plus对话框
+      }
     } finally {
       router.refresh(); //刷新页面
     }

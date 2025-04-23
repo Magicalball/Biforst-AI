@@ -23,8 +23,10 @@ import {
 } from "@/components/ui/select";
 import { Card, CardFooter } from "@/components/ui/card";
 import Image from "next/image";
+import { usePlusStore } from "@/hooks/use-plus";
 
 const PicturePage = () => {
+  const plusStore = usePlusStore();
   const router = useRouter();
   const [images, setImages] = useState<string[]>([]); //图片数据
   const form = useForm<z.infer<typeof formSchema>>({
@@ -45,9 +47,10 @@ const PicturePage = () => {
       const urls = response.data.map((image: { url: string }) => image.url);
       setImages(urls);
       form.reset(); //重置输入框
-    } catch (error: Error | unknown) {
-      //错误处理记得回头看一下
-      console.log(error);
+    } catch (error: any) {
+      if (error?.response?.status === 403) {
+        plusStore.onOpen(); //打开Plus对话框
+      }
     } finally {
       router.refresh(); //刷新页面
     }

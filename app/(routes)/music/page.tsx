@@ -25,6 +25,7 @@ import {
 import { Download } from "lucide-react";
 
 const MusicPage = () => {
+  const plusStore = usePlusStore();
   const [isGenerating, setIsGenerating] = useState(false);
   const [taskId, setTaskId] = useState<string>("");
   const router = useRouter();
@@ -53,9 +54,10 @@ const MusicPage = () => {
         // 继续轮询
         setTimeout(() => checkMusicStatus(taskId), 5000);
       }
-    } catch (error: Error | unknown) {
-      //错误处理记得回头看一下
-      console.log(error);
+    } catch (error: any) {
+      if (error?.response?.status === 403) {
+        plusStore.onOpen(); //打开Plus对话框
+      }
       setIsGenerating(false);
     } finally {
       router.refresh(); //刷新页面

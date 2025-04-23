@@ -108,9 +108,9 @@ const Sidebar = ({ apiLimitCount = 0 }: SiderbarProps) => {
       </div>
       <FreeCounter apiLimitCount={apiLimitCount} />
       <div className="flex flex-col items-center justify-center space-y-2 border-t border-t-gray-700 pt-4">
-        <p className="text-xs text-gray-400">Made by <a href="https://github.com/Magicalball/Biforst-AI" target="_blank">Magical_ball</a></p>
+        <p className="text-xs text-gray-400">Made by <a href="https://github.com/Magicalball/Biforst-AI" target="_blank" className="text-gray-300">Magical_ball</a></p>
         <p className="text-xs text-gray-400">© 2025 Biforst AI</p>
-        <p className="text-xs text-gray-400">Powered by <a href="https://nextjs.org/" target="_blank">Next.js</a></p>
+        <p className="text-xs text-gray-400">Powered by <a href="https://nextjs.org/" target="_blank" className="text-gray-300">Next.js</a></p>
       </div>
     </div>
   );
