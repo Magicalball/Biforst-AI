@@ -42,7 +42,7 @@ export async function GET() {
       line_items: [
         {
           price_data: {
-            currency: "RMB",
+            currency: "CNY",
             product_data: {
               name: "Biforst AI Pro",
               description: "Unlimited AI prompts",
