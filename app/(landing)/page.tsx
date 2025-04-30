@@ -1,3 +1,4 @@
+import { LandingContent } from "@/components/landingcontent";
 import { LandingMain } from "@/components/landingmain";
 import { LandingNav } from "@/components/landingnav";
 
@@ -6,6 +7,7 @@ const LandingPage = () => {
     <div>
       <LandingNav />
       <LandingMain />
+      <LandingContent />
     </div>
   );
 };

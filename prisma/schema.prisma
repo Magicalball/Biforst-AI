@@ -23,10 +23,10 @@ model UserAPILimit {
 }
 
 model UserPlus {
-  id                     String    @id @default(cuid())
-  userId                 String?   @unique
-  stripeCustomerId       String?   @unique @map(name: "stripe_customer_id") // stripe 客户 id
-  stripeSubscriptionId   String?   @unique @map(name: "stripe_subscription_id") // 订阅 id
-  stripePriceId          String?   @map(name: "stripe_price_id") // 价格 id
-  stripeCurrentPeriodEnd DateTime? @map(name: "stripe_current_period_end") // 订阅结束时间
+  id                     String  @id @default(cuid())
+  userId                 String? @unique
+  stripeCustomerId       String? @unique @map(name: "stripe_customer_id") // stripe 客户 id
+  stripeSubscriptionId   String? @unique @map(name: "stripe_subscription_id") // 订阅 id
+  stripePriceId          String? @map(name: "stripe_price_id") // 价格 id
+  stripeCurrentPeriodEnd DateTime?   @map(name: "stripe_current_period_end") // 订阅结束时间
 }

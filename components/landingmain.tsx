@@ -1,6 +1,8 @@
 "use client";
 import { useAuth } from "@clerk/nextjs";
+import Link from "next/link";
 import TypeWriterCompents from "typewriter-effect";
+import { Button } from "@/components/ui/button";
 
 export const LandingMain = () => {
   const { isSignedIn } = useAuth();
@@ -19,6 +21,21 @@ export const LandingMain = () => {
             delay: 50,
           }}
         />
+      </div>
+      <div className="text-sm font-black text-zinc-500 md:text-xl">
+        用AI提升你的工作效率，释放你的创造力！
+      </div>
+      <div>
+        <Link href={isSignedIn ? "/dashboard" : "/sign-up"}>
+          <Button
+            variant="premium"
+            className="rounded-full p-4 font-semibold md:p-6 md:text-lg">
+            开始免费体验
+          </Button>
+        </Link>
+      </div>
+      <div className="text-xs font-normal text-zinc-400 md:text-sm">
+        <p>立即注册，开启你的AI之旅！</p>
       </div>
     </div>
   );

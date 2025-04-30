@@ -14,6 +14,8 @@ import { Card } from "@/components/ui/card";
 import { Check, ImageIcon, MusicIcon, VideoIcon, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import axios from "axios";
+import { useState } from "react";
 
 export const PlusModel = () => {
   const tools = [
@@ -37,6 +39,19 @@ export const PlusModel = () => {
     },
   ];
   const plusStore = usePlusStore();
+  const [Loading, setLoading] = useState(false);
+  const onSubscribe = async () => {
+    try {
+      setLoading(true);
+      const res = axios.get("/api/stripe")
+
+      window.location.href = (await res).data.url;
+    } catch (erro) {
+      console.log(erro,"STRIPE_CLIENT_ERROR");
+    }finally {
+      setLoading(false);
+    }
+  };
   return (
     <div>
       <Dialog
@@ -74,6 +89,7 @@ export const PlusModel = () => {
           </DialogHeader>
           <DialogFooter>
             <Button
+              onClick={onSubscribe}
               size="lg"
               variant="premium"
               className="w-full">
