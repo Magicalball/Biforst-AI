@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { stripe } from "@/lib/stripe";
 
-export async function post(req: Request) {
+export async function POST(req: Request) {
   const body = await req.text();
   const signature = (await headers()).get("stripe-signature") as string;
   if (!signature) {

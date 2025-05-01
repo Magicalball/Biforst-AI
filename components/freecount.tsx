@@ -9,9 +9,10 @@ import { usePlusStore } from "@/hooks/use-plus";
 
 interface FreeCounterProps {
   apiLimitCount: number;
+  isPlus: boolean;
 }
 
-export const FreeCounter = ({ apiLimitCount = 0 }: FreeCounterProps) => {
+export const FreeCounter = ({ apiLimitCount = 0, isPlus = false }: FreeCounterProps) => {
   const plusStore = usePlusStore();
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
@@ -19,6 +20,10 @@ export const FreeCounter = ({ apiLimitCount = 0 }: FreeCounterProps) => {
   }, []);
 
   if (!mounted) {
+    return null;
+  }
+
+  if (isPlus) {
     return null;
   }
   return (

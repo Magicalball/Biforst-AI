@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 import { creatApiLimit, checkApiLimit } from "@/lib/api-limit";
+import { checkSubscription } from "@/lib/subscription";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -30,6 +31,7 @@ export async function POST(req: Request) {
     }
 
     const freeTrial = await checkApiLimit();
+    const isPlus = await checkSubscription();
 
     if (!freeTrial) {
       return new NextResponse("Free is required", { status: 403 });
@@ -41,7 +43,9 @@ export async function POST(req: Request) {
       n: parseInt(amount, 10),
       size: resolution,
     });
-    await creatApiLimit();
+    if (!isPlus) {
+      await creatApiLimit();
+    }
     return NextResponse.json(response.data);
   } catch (error) {
     console.error("[PICTURE_ERROR]", error);

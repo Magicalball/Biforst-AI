@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Montserrat } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
-import {FreeCounter} from "@/components/freecount";
+import { FreeCounter } from "@/components/freecount";
 
 import {
   CodeIcon,
@@ -62,16 +62,17 @@ const routes = [
   {
     name: "设置",
     icon: SettingsIcon,
-    href: "/setting",
+    href: "/settings",
     color: "text-gray-400",
   },
 ];
 
 interface SiderbarProps {
   apiLimitCount: number;
+  isPlus: boolean;
 }
 
-const Sidebar = ({ apiLimitCount = 0 }: SiderbarProps) => {
+const Sidebar = ({ apiLimitCount = 0, isPlus = false }: SiderbarProps) => {
   const pathname = usePathname();
 
   return (
@@ -106,11 +107,30 @@ const Sidebar = ({ apiLimitCount = 0 }: SiderbarProps) => {
           ))}
         </div>
       </div>
-      <FreeCounter apiLimitCount={apiLimitCount} />
+      <FreeCounter
+        isPlus={isPlus}
+        apiLimitCount={apiLimitCount}
+      />
       <div className="flex flex-col items-center justify-center space-y-2 border-t border-t-gray-700 pt-4">
-        <p className="text-xs text-gray-400">Made by <a href="https://github.com/Magicalball/Biforst-AI" target="_blank" className="text-gray-300">Magical_ball</a></p>
+        <p className="text-xs text-gray-400">
+          Made by{" "}
+          <a
+            href="https://github.com/Magicalball/Biforst-AI"
+            target="_blank"
+            className="text-gray-300">
+            Magical_ball
+          </a>
+        </p>
         <p className="text-xs text-gray-400">© 2025 Biforst AI</p>
-        <p className="text-xs text-gray-400">Powered by <a href="https://nextjs.org/" target="_blank" className="text-gray-300">Next.js</a></p>
+        <p className="text-xs text-gray-400">
+          Powered by{" "}
+          <a
+            href="https://nextjs.org/"
+            target="_blank"
+            className="text-gray-300">
+            Next.js
+          </a>
+        </p>
       </div>
     </div>
   );

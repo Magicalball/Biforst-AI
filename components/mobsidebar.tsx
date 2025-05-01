@@ -8,9 +8,10 @@ import { useEffect, useState } from "react";
 
 interface MobSidebarProps {
   apiLimitCount: number;
+  isPlus: boolean;
 }
 
-const MobSidebar = ({ apiLimitCount }: MobSidebarProps) => {
+const MobSidebar = ({ apiLimitCount = 0, isPlus = false }: MobSidebarProps) => {
   // 组件仅在客户端渲染
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => {
@@ -32,7 +33,10 @@ const MobSidebar = ({ apiLimitCount }: MobSidebarProps) => {
       <SheetContent
         side="left"
         className="p-0">
-        <Sidebar apiLimitCount={apiLimitCount} />
+        <Sidebar
+          isPlus={isPlus}
+          apiLimitCount={apiLimitCount}
+        />
       </SheetContent>
     </Sheet>
   );

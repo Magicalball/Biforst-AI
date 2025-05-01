@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardContent,  CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 const conabout = [
   {
@@ -36,10 +36,10 @@ export const LandingContent = () => {
                   <p className="p-0 text-lg">{item.title}</p>
                 </div>
               </CardTitle>
+              <CardDescription>
+                <div>{item.description}</div>
+              </CardDescription>
             </CardHeader>
-            <CardContent className="px-2 pt-4">
-              <div>{item.description}</div>
-            </CardContent>
           </Card>
         ))}
       </div>

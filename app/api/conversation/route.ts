@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 import { creatApiLimit, checkApiLimit } from "@/lib/api-limit";
+import { checkSubscription } from "@/lib/subscription";
 
 export async function POST(req: Request) {
   try {
@@ -35,8 +36,9 @@ export async function POST(req: Request) {
     }
 
     const freeTrial = await checkApiLimit();
+    const isPlus = await checkSubscription();
 
-    if (!freeTrial) {
+    if (!freeTrial && !isPlus) {
       return new NextResponse("Free is required", { status: 403 });
     }
 
@@ -45,7 +47,9 @@ export async function POST(req: Request) {
       messages,
     });
 
-    await creatApiLimit();
+    if (!isPlus) {
+      await creatApiLimit();
+    }
     return NextResponse.json(response.choices[0].message);
   } catch (error) {
     console.error("[CONVERSATION_ERROR]", error);

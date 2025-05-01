@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import OpenAI from "openai";
 import { ChatCompletionMessage } from "openai/resources/index.mjs";
 import { creatApiLimit, checkApiLimit } from "@/lib/api-limit";
+import { checkSubscription } from "@/lib/subscription";
 
 const openai = new OpenAI({
   baseURL: "https://api.deepseek.com",
@@ -32,6 +33,7 @@ export async function POST(req: Request) {
     }
 
     const freeTrial = await checkApiLimit();
+    const isPlus = await checkSubscription();
 
     if (!freeTrial) {
       return new NextResponse("Free is required", { status: 403 });
@@ -41,7 +43,9 @@ export async function POST(req: Request) {
       model: "deepseek-chat",
       messages: [instructionMessage, ...messages],
     });
-    await creatApiLimit();
+    if (!isPlus) {
+      await creatApiLimit();
+    }
     return NextResponse.json(response.choices[0].message);
   } catch (error) {
     console.error("[CODE_ERROR]", error);
