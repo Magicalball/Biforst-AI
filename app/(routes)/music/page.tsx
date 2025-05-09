@@ -3,7 +3,7 @@
 import axios from "axios";
 import * as z from "zod";
 import { useState } from "react";
-import { Music } from "lucide-react";
+import { Music, Download } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { formSchema } from "./constance";
 import { useRouter } from "next/navigation";
@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { EmptyPage } from "@/components/empty";
 import { Loader } from "@/components/loader";
 import { Card, CardContent } from "@/components/ui/card";
+import { usePlusStore } from "@/hooks/use-plus";
 import {
   Select,
   SelectContent,
@@ -22,7 +23,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Download } from "lucide-react";
 
 const MusicPage = () => {
   const plusStore = usePlusStore();
@@ -36,7 +36,6 @@ const MusicPage = () => {
       prompt: "",
       style: "",
       title: "",
-      callBackUrl: "https://api.example.com/callback",
     },
   });
 
@@ -54,8 +53,16 @@ const MusicPage = () => {
         // 继续轮询
         setTimeout(() => checkMusicStatus(taskId), 5000);
       }
-    } catch (error: any) {
-      if (error?.response?.status === 403) {
+    } catch (error: unknown) {
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "response" in error &&
+        typeof error.response === "object" &&
+        error.response !== null &&
+        "status" in error.response &&
+        error.response.status === 403
+      ) {
         plusStore.onOpen(); //打开Plus对话框
       }
       setIsGenerating(false);

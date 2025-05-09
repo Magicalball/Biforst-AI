@@ -33,7 +33,7 @@ export async function POST(req: Request) {
     const freeTrial = await checkApiLimit();
     const isPlus = await checkSubscription();
 
-    if (!freeTrial) {
+    if (!freeTrial && !isPlus) {
       return new NextResponse("Free is required", { status: 403 });
     }
 
