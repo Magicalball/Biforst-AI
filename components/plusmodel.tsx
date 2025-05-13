@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 export const PlusModel = () => {
   const tools = [
@@ -43,12 +44,12 @@ export const PlusModel = () => {
   const onSubscribe = async () => {
     try {
       setLoading(true);
-      const res = axios.get("/api/stripe")
+      const res = axios.get("/api/stripe");
 
       window.location.href = (await res).data.url;
     } catch (erro) {
-      console.log(erro,"STRIPE_CLIENT_ERROR");
-    }finally {
+      toast.error("出错啦！");
+    } finally {
       setLoading(false);
     }
   };
@@ -89,6 +90,7 @@ export const PlusModel = () => {
           </DialogHeader>
           <DialogFooter>
             <Button
+              disabled={Loading}
               onClick={onSubscribe}
               size="lg"
               variant="premium"

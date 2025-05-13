@@ -20,6 +20,7 @@ import { cn } from "@/lib/utils";
 import { BotHead } from "@/components/bothead";
 import { UserHead } from "@/components/userhead";
 import { usePlusStore } from "@/hooks/use-plus";
+import toast from "react-hot-toast";
 
 const CodePage = () => {
   const plusStore = usePlusStore();
@@ -52,6 +53,8 @@ const CodePage = () => {
     } catch (error: any) {
       if (error?.response?.status === 403) {
         plusStore.onOpen(); //打开Plus对话框
+      } else {
+        toast.error("出错啦！");
       }
     } finally {
       router.refresh(); //刷新页面

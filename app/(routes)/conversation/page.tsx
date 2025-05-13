@@ -21,6 +21,7 @@ import { UserHead } from "@/components/userhead";
 import { Select, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { SelectTrigger } from "@radix-ui/react-select";
 import { usePlusStore } from "@/hooks/use-plus";
+import toast from "react-hot-toast";
 
 const ConversationPage = () => {
   const plusStore = usePlusStore();
@@ -56,6 +57,8 @@ const ConversationPage = () => {
     } catch (error: any) {
       if (error?.response?.status === 403) {
         plusStore.onOpen(); //打开Plus对话框
+      } else {
+        toast.error("出错啦！");
       }
     } finally {
       router.refresh(); //刷新页面

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { Zap } from "lucide-react";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 interface PlusButtonProps {
   isPlus: boolean;
@@ -18,7 +19,7 @@ export const PlusButton = ({ isPlus = false }: PlusButtonProps) => {
 
       window.location.href = res.data.url;
     } catch (error) {
-      console.log("Error in PlusButton:", error);
+      toast.error("出错啦！");
     } finally {
       setLoading(false);
     }
@@ -28,8 +29,7 @@ export const PlusButton = ({ isPlus = false }: PlusButtonProps) => {
     <Button
       disabled={Loading}
       variant={isPlus ? "default" : "premium"}
-      onClick={onClick}
-      >
+      onClick={onClick}>
       {isPlus ? "管理PLUS页面" : "点击升级到PLUS"}
       {!isPlus && <Zap className="ml-2 h-4 w-4 fill-white" />}
     </Button>

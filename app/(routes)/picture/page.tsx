@@ -24,6 +24,7 @@ import {
 import { Card, CardFooter } from "@/components/ui/card";
 import Image from "next/image";
 import { usePlusStore } from "@/hooks/use-plus";
+import toast from "react-hot-toast";
 
 const PicturePage = () => {
   const plusStore = usePlusStore();
@@ -50,6 +51,8 @@ const PicturePage = () => {
     } catch (error: any) {
       if (error?.response?.status === 403) {
         plusStore.onOpen(); //打开Plus对话框
+      } else {
+        toast.error("出错啦！");
       }
     } finally {
       router.refresh(); //刷新页面
