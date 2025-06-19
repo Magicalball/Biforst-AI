@@ -9,14 +9,15 @@ const conabout = [
     description: "是一个SaaS平台，提供AI工具和服务，帮助用户提升工作效率和创造力。",
   },
   {
-    avatat: "A",
-    title: "SaaS平台",
-    description: "是一个SaaS平台，提供AI工具和服务，帮助用户提升工作效率和创造力。",
+    avatat: "B",
+    title: "AI赋能",
+    description:
+      "通过AI技术，赋能企业提升工作效率和创造力，实现业务增长和创新。",
   },
   {
-    avatat: "A",
-    title: "SaaS平台",
-    description: "是一个SaaS平台，提供AI工具和服务，帮助用户提升工作效率和创造力。",
+    avatat: "C",
+    title: "便捷高效",
+    description: "低门槛，便捷高效，让用户轻松上手，提升工作效率。",
   },
 ];
 

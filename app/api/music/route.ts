@@ -1,59 +1,48 @@
+import { checkApiLimit, creatApiLimit } from "@/lib/api-limit";
+import { checkSubscription } from "@/lib/subscription";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import axios from "axios";
+import Replicate from "replicate";
 
-// 定义请求体的类型
-interface VideoGenerationRequest {
-  prompt: string;
-  size?: string;
-  model?: string;
-  duration?: number;
-}
+const replicate = new Replicate({
+  auth: process.env.REPLICATE_API_TOKEN!,
+});
 
 export async function POST(req: Request) {
   try {
     const { userId } = await auth();
     const body = await req.json();
-    const {
-      prompt,
-      size,
-      duration,
-      model="wanx2.1-t2v-turbo",
-    } = body as VideoGenerationRequest;
+    const { prompt } = body;
 
     if (!userId) {
-      return new NextResponse("Unauthorized", { status: 401 });
-    }
-
-    if (!process.env.SUNO_API_KEY) {
-      return new NextResponse("API key is missing", { status: 500 });
+      return new NextResponse("未授权", { status: 401 });
     }
 
     if (!prompt) {
-      return new NextResponse("Prompt is required", { status: 400 });
+      return new NextResponse("提示词不能为空", { status: 400 });
     }
 
-    const config = {
-      method: "post",
-      maxBodyLength: Infinity,
-      url: "https://apibox.erweima.ai/api/v1/generate",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${process.env.SUNO_API_KEY}`,
-      },
-      data: {
-        prompt,
-        size,
-        model,
-        duration,
-      },
-    };
+    const freeTrial = await checkApiLimit();
+    const isPlus = await checkSubscription();
 
-    const response = await axios.request(config);
-    return NextResponse.json(response.data);
+    if (!freeTrial && !isPlus) {
+      return new NextResponse("Free is required", { status: 403 });
+    }
+
+    const response = await replicate.run(
+      "riffusion/riffusion:8cf61ea6c56afd61d8f5b9ffd14d7c216c0a93844ce2d82ac1c9ecc9c7f24e05",
+      { input: { prompt_b: prompt } },
+    );
+
+    if (!isPlus) {
+      await creatApiLimit();
+    }
+
+    return NextResponse.json(response);
   } catch (error) {
-    console.error("[VIDEO_GENERATION_ERROR]", error);
+    console.error("[CODE_ERROR]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
 }
+
+
